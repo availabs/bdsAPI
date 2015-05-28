@@ -71,19 +71,28 @@ module.exports = {
 	              "49": "UT",  "50": "VT",  "51": "VA",  "53": "WA",
 	              "54": "WV",  "55": "WI",  "56": "WY"},    
 
+
+    getAllStates: function(opts, cb){
+	return this.find({}, this._correctFips(cb));
+    },
+    
     getState: function(opts, cb){
 	// Find all records for a particular state
 	// convert from 2 letter abrev to state fips,  or just accept opts.state
-	return this.find({"state": State.state_to_fips[opts.state] || opts.state},
-			 function (err, data){
-			     if(err) return cb(err);
-			     // return call back,  but set each elements 'state'  to the 2 letter state abrev
-			     return cb(err, ld.map(data,function(d){
-				 if (d.hasOwnProperty("state"))
-				     d.state = State.fips_to_state[d.state];
-				 return d;
-			     }));
-			 });
-    }
+	return this.find({"state": State.state_to_fips[opts.state] || opts.state}, this._correctFips(cb));
+
+    },
+
+    // Make sure we're always returning the correct 2 letter abrev
+    _correctFips: function(cb){
+	return function (err, data){
+	    if(err) return cb(err);
+	    // return call back,  but set each elements 'state'  to the 2 letter state abrev
+	    return cb(err, ld.map(data,function(d){
+		if (d.hasOwnProperty("state"))
+		    d.state = State.fips_to_state[d.state];
+		return d;
+	    }));
+	}; }
 };
 

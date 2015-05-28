@@ -34,7 +34,12 @@ module.exports.routes = {
 
     '/': { view: 'homepage' },
 
-    "get /state/:state_id": 'StateController.state'
+    'PUT /*': {response: 'notFound'},
+    'POST /*': {response: 'notFound'},
+    'DELETE /*': {response: 'notFound'},
+
+    "GET /state": 'StateController.all_states',
+    "GET /state/:state_id": 'StateController.state'
     
 
   /***************************************************************************
