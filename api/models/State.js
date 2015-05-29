@@ -83,16 +83,69 @@ module.exports = {
 
     },
 
-    // Make sure we're always returning the correct 2 letter abrev
+
+    // general function to generate a postgres style SQL condition
+    // based on a collection and its attributes. This allows us to
+    // query other tables (e.g.,  "AGExST") and return only the rows 
+    // that are applicable to the the items in the collection. 
+    _generateCondition: function (collection, attrs){
+	return ld.map(collection, function(obj){
+	    return "(" +
+		ld.map(attrs, function(a) {
+		    // put single quotes around a value if the attribute is of type 'string'
+		    // as defined by State.attributes
+		    var _cast = function (v){
+			return State.attributes[a]['type'] == 'string' ? "'" + v + "'" : v; };
+
+		    // this is janky and doesn't belong here,  going to maybe have to think
+		    // about moving the FIPS/Abrev stuff into the controler?  more of presentation
+		    // thing anyways
+		    if( a == "state")
+			return a + " = " + _cast(State.state_to_fips[obj[a]] || obj[a]);
+
+		    return a + " = " + _cast(obj[a]); }).join(" AND ")
+		+ ")";}).join(" OR ");
+    },
+
+    withAge: function (states, cb){
+	// for debugging
+	states = ld.sample(states, 10);
+
+	var _shash = function (obj){
+	    return obj.year2.toString() + obj.state; };
+	
+	var state_hash = ld.zipObject( ld.map(states, _shash), states);
+
+
+	return State.query("SELECT * FROM \"AGExST\" WHERE " +
+			   State._generateCondition(states, ["year2", "state"]),
+			   function(err, data){
+			       if(err) cb(err);
+			       // Do stuff here to merge datasets
+			       // **** HERE *****
+			       // loop/map through the returned data and merge it into the objects
+			       // stored on state_hash using the _shash function. Then abstract
+			       // this out into a function '_with'   that takes the nessisary configurables
+			       // and then create functions like withAge,  withMetro  etc
+			       
+			      });
+
+	
+
+    },
+
+    // Make sure we're always returning the correct 2 letter abrev instead of fips code
     _correctFips: function(cb){
 	return function (err, data){
 	    if(err) return cb(err);
 	    // return call back,  but set each elements 'state'  to the 2 letter state abrev
 	    return cb(err, ld.map(data,function(d){
-		if (d.hasOwnProperty("state"))
-		    d.state = State.fips_to_state[d.state];
+		if (ld.has(d, "state"))
+		    d.state = State.fips_to_state[d.state];	
 		return d;
 	    }));
 	}; }
+    
+
 };
 
