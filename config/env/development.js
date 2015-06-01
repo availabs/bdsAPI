@@ -22,7 +22,7 @@ module.exports = {
     connections: {
 	localPostgresDB: {
 	    adapter: 'sails-postgresql',
-	    host: '127.0.0.1',
+	    host: 'postgres',
 	    user: 'kotfic',
 	    password: 'letmein',
 	    database: 'BDS'
