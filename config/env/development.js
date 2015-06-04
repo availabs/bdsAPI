@@ -20,13 +20,21 @@ module.exports = {
 
 
     connections: {
-	localPostgresDB: {
+	bds_establishment: {
 	    adapter: 'sails-postgresql',
 	    host: 'postgres',
-	    user: 'kotfic',
+	    user: 'bds_user',
 	    password: 'letmein',
-	    database: 'BDS'
+	    database: 'establishment'
+	},
+	bds_firm: {
+	    adapter: 'sails-postgresql',
+	    host: 'postgres',
+	    user: 'bds_user',
+	    password: 'letmein',
+	    database: 'firm'
 	}
+	
     },
     
     models: {

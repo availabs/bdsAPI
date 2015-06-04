@@ -116,4 +116,8 @@ npm-debug.log
 nbproject
 .idea
 .node_history
-/data/
+
+data/firm_files/
+data/establishment_files/
+*.pyc
+*~

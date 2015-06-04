@@ -8,10 +8,11 @@
 var ld = sails.util._;
 
 module.exports = {
+    connection: "bds_firm",
     autoCreatedAt: false,
     autoUpdatedAt: false,
     autoPK: false,
-    tableName: "ST",
+    tableName: "st",
     attributes: {
 	year2:{ type: "integer"},
 	state: { type:  "string" },
