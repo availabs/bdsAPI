@@ -23,7 +23,7 @@ module.exports = {
     
     // main function for the per state endpoints
     state: function(req, res){
-	State.getState({"state": req.param("state_id")},
+	State.getState({"state": parseInt(req.param("state_id"))},
 		       function(err, data){
 			   if(err) return return_error(res, err);	
 			   return res.json(data);

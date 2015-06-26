@@ -38,8 +38,16 @@ module.exports.routes = {
     'POST /*': {response: 'notFound'},
     'DELETE /*': {response: 'notFound'},
 
-    "GET /state": 'StateController.all_states',
-    "GET /state/:state_id": 'StateController.state'
+    
+    "GET /firm/:fips": 'FipsController.processFips',
+    "GET /establishment/:fips": 'FipsController.processFips'
+
+
+    
+//    "GET /state": 'StateController.all_states',
+//    "GET /state/:state_id": 'StateController.state'
+
+    
     
 
   /***************************************************************************

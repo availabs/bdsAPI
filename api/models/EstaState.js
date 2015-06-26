@@ -8,7 +8,7 @@
 var ld = sails.util._;
 
 module.exports = {
-    connection: "bds_firm",
+    connection: "bds_establishment",
     autoCreatedAt: false,
     autoUpdatedAt: false,
     autoPK: false,
