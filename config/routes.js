@@ -38,9 +38,17 @@ module.exports.routes = {
     'POST /*': {response: 'notFound'},
     'DELETE /*': {response: 'notFound'},
 
+    "GET /codes": 'CodesController.codes',
+    "GET /firm/codes": 'CodesController.firm_codes',
+    "GET /firm/codes/:type": 'CodesController.firm_codes',
+    "GET /establishment/codes": 'CodesController.esta_codes',
+    "GET /establishment/codes/:type": 'CodesController.esta_codes',
     
     "GET /firm/:fips": 'FipsController.processFips',
-    "GET /establishment/:fips": 'FipsController.processFips'
+    "GET /establishment/:fips": 'FipsController.processFips',
+
+
+    "GET /test": 'TestController.test'
 
 
     

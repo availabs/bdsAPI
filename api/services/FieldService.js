@@ -4,34 +4,40 @@
 
 var ld = sails.util._;
 
+
+//connection.query(queryString, function(err, records){
+//    // Do something
+//});
+
+
 var field_meta = {
-    "esta": {"combinations": [
-	["ew"],
-	["st"],
-	["sz"],
-	["isz"],
-	["age"],
-	["sic"],
-	["sz","st"]
-	["isz","st"],
-	["sz","sic"],
-	["age","st"],
-	["age","sz"],
-	["isz","sic"],
-	["age","sic"],
-	["age","isz"],
-	["age","sz","st"],
-	["age","isz","st"],
-	["age","sz","sic"],
-	["age","isz","sic"]],
-	     "pkeys": {
-		 "age": "age4",
-		 "st": "state",
-		 "sz": "size",
-		 "isz": "isize",
-		 "sic": "sic1"
-	     }
-	    },
+    "esta": {
+	"combinations": [["ew"],
+			 ["st"],
+			 ["sz"],
+			 ["isz"],
+			 ["age"],
+			 ["sic"],
+			 ["sz","st"]
+			 ["isz","st"],
+			 ["sz","sic"],
+			 ["age","st"],
+			 ["age","sz"],
+			 ["isz","sic"],
+			 ["age","sic"],
+			 ["age","isz"],
+			 ["age","sz","st"],
+			 ["age","isz","st"],
+			 ["age","sz","sic"],
+			 ["age","isz","sic"]],
+	"pkeys": {
+	    "age": "age4",
+	    "st": "state",
+	    "sz": "size",
+	    "isz": "isize",
+	    "sic": "sic1"
+	}
+    },
     
     "firm":  {"combinations":
 	      [["age"],
@@ -63,6 +69,7 @@ var field_meta = {
 	       ["age","isz","met"],
 	       ["age","sz","met","st"],
 	       ["age","isz","met","st"]],
+
 	      "pkeys": {
 		  "age": "fage4",
 		  "st": "state",
@@ -71,30 +78,41 @@ var field_meta = {
 		  "sic": "sic1",
 		  "met": "metro",
 		  "msa": "msa"
-	      },
-
-	      "isz_codes": {
-		  "a) 1 to 4",
-		  "b) 5 to 9",
-		  "c) 10 to 19",
-		  "d) 20 to 49",
-		  "e) 50 to 99",
-		  "f) 100 to 249",
-		  "g) 250 to 499",
-		  "h) 500 to 999",
-		  "i) 1000 to 2499",
-		  "j) 2500 to 4999",
-		  "k) 5000 to 9999",
-		  "l) 10000+"	
+	      }
 	     }
 };
     
     
 
-
-
 module.exports = {
+    _query_model: function(type){
+	if(type == "firm"){
+	    return GenericFirm;
+	} else {
+	    return GenericEsta;
+	}
+    },
 
+    // type: one of 'firm' or 'esta'
+    // field: one of 'sz', 'isz', 'age'
+    // cb: call back taking one variable with an object
+    //     that will be of type {"code": "value", ... }
+    with_codes: function(type, field, cb){
+	if(type == "establishment") type = "esta";
+	
+	var sql = "SELECT \"code\", \"value\" FROM \"" + field_meta[type]["pkeys"][field] + "_codes\"";
+	
+	this._query_model(type).query(sql,
+				      function(err, data){					  
+					  cb(ld.zipObject(
+					      ld.map(data.rows, function(x){ return ld.str.lpad(x['code'], 2, "0"); }),
+					      ld.map(data.rows, function(x){ return x['value']; })));
+				      });
+    },
+    
+
+    //check if 'args' are a list of valid table identifiers
+    // set theory for the win
     _validp: function(type, args){
 	return ld.find(field_meta[type], function(lst){
 	    return ld.xor(args, lst).length == 0;
@@ -127,7 +145,7 @@ module.exports = {
 
     _isizep: function(arg){
 	// min: 1,  max: 56
-	if(ld.startsWith(arg, "is"))
+	if(ld.startsWith(arg, "st"))
 	    return True;
 	return False;
 
@@ -135,21 +153,21 @@ module.exports = {
 
     _sicp: function(arg){
 	// min: 1,  max: 56
-	if(ld.startsWith(arg, "sc"))
+	if(ld.startsWith(arg, "sic"))
 	    return True;
 	return False;
     },
     
     _agep: function(arg){
 	// min: 1,  max: 56
-	if(ld.startsWith(arg, "ag"))
+	if(ld.startsWith(arg, "age"))
 	    return True;
 	return False;
     },
 
     _msap: function(arg){
 	// min: 1,  max: 56
-	if(ld.startsWith(arg, "ma"))
+	if(ld.startsWith(arg, "msa"))
 	    return True;
 	return False;
     },
