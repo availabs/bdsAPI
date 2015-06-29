@@ -11,7 +11,7 @@ var ld = sails.util._;
 
 
 var field_meta = {
-    "esta": {
+    "establishment": {
 	"combinations": [["ew"],
 			 ["st"],
 			 ["sz"],
@@ -85,6 +85,10 @@ var field_meta = {
     
 
 module.exports = {
+    _field_meta: function(){
+	return field_meta;
+    },
+
     _query_model: function(type){
 	if(type == "firm"){
 	    return GenericFirm;
@@ -98,12 +102,12 @@ module.exports = {
     // cb: call back taking one variable with an object
     //     that will be of type {"code": "value", ... }
     with_codes: function(type, field, cb){
-	if(type == "establishment") type = "esta";
 	
 	var sql = "SELECT \"code\", \"value\" FROM \"" + field_meta[type]["pkeys"][field] + "_codes\"";
 	
 	this._query_model(type).query(sql,
-				      function(err, data){					  
+				      function(err, data){
+					  // Should do some kind of error checking here
 					  cb(ld.zipObject(
 					      ld.map(data.rows, function(x){ return ld.str.lpad(x['code'], 2, "0"); }),
 					      ld.map(data.rows, function(x){ return x['value']; })));
@@ -114,7 +118,7 @@ module.exports = {
     //check if 'args' are a list of valid table identifiers
     // set theory for the win
     _validp: function(type, args){
-	return ld.find(field_meta[type], function(lst){
+	return ld.find(field_meta[type]["combinations"], function(lst){
 	    return ld.xor(args, lst).length == 0;
 	});
     },
@@ -122,63 +126,108 @@ module.exports = {
     _table: function(type, args){
 	var tbl_parts =  this._validp(type, args);
 	if(tbl_parts === undefined)
-	    throw args.join(", ") + " are not valid firm subgroups!";
+	    throw args.join(", ") + " are not valid "+ type +" subgroups!";
 
 	return tbl_parts.join("x");
     },
     
-    establishment_table: function(args){
-	return this._table("esta", args);
+    //Given a route component such as st065341
+    //return a list of id's,  eg ['06', '53', '42']
+    field_conditions: function(field, w){
+	w = typeof w !== "undefined" ?  w : 2;
+
+	if(ld.str.startsWith(field, 'msa')) w = 5;
+
+	if(ld.str.startsWith(field, 'yr')) w = 4;
+
+	var re = new RegExp("\\d{1," + w +  "}", "g");
+
+	return field.match(re);
     },
 
-    firm_table: function(args){
-	return this._table("esta", args);
+    //Given a route component such as st065341
+    //return the element string 'st'
+    field_type: function(field){
+	return field.match(/\D+/g)[0];
     },
 
-
-    _sizep: function(arg){
-	if(ld.startsWith(arg, "sz"))
-	    return True;
-	return False;
+    
+    route_table: function(type, route){
+	var elements = typeof route == "string" ? route.split("/") : route;
+	
+	try{
+	    return this._table(type, ld.map(elements, this.field_type));
+	} catch(err){
+	    // this should be a debug statement not a console log?
+	    // how does sails do debugging?
+	    console.log(err);
+	    return undefined;
+	}
     },
 
+    parse_route: function(type, route){
+	return ld.map(route, function(f){
+	    var field = FieldService.field_type(f);
+	    var condition = FieldService.field_conditions(f);
 
-    _isizep: function(arg){
-	// min: 1,  max: 56
-	if(ld.startsWith(arg, "st"))
-	    return True;
-	return False;
+	    // should have check that key can be found
+	    return {"field": field,
+		    "key": field_meta[type]["pkeys"][field],
+		    "conditions": condition};
+	});
 
     },
 
-    _sicp: function(arg){
-	// min: 1,  max: 56
-	if(ld.startsWith(arg, "sic"))
-	    return True;
-	return False;
+    // give a route parse,  return a list of conditions based on
+    // parsing out the values passed in the parse
+    _route_conditions: function(parse){	
+	return ld.filter(
+	    ld.map(parse,
+		   function(e){
+		       if(e['conditions'] == null) return null;
+		       // Add code here to manage year range
+		       if(e['conditions'].length == 1){
+			   return e['key'] + " = '" + e['conditions'].join("") + "'";
+		       } else if (e['conditions'].length > 1){
+			   return e['key'] + " IN ('" + e['conditions'].join("','") + "')";
+		       }
+		       return null;
+		   }),
+	    function(e){ return e != null; });
     },
     
-    _agep: function(arg){
-	// min: 1,  max: 56
-	if(ld.startsWith(arg, "age"))
-	    return True;
-	return False;
-    },
+    route_query: function(type, route, fields){
+	var table = this.route_table(type, route);
+	var parse = this.parse_route(type, route);
 
-    _msap: function(arg){
-	// min: 1,  max: 56
-	if(ld.startsWith(arg, "msa"))
-	    return True;
-	return False;
-    },
-    
-    _statep: function(arg){
-	// min: 1,  max: 56
-	if(ld.startsWith(arg, "st"))
-	    return True;
-	return False;
+	// Handle fields to select on,  if not specified we default to '*'
+	// otherwise take the fields,  and pluck the keys from the parse to
+	// make sure they are included for later grouping
+	if( typeof fields !== "undefined"){
+	    // Currently untested!
+	    fields.push.apply(fields, ld.pluck(parse, "key"));
+	    fields = ld.uniq(fields);
+	} else {
+	    fields = ["*"];
+	}
+
+	var sql = "SELECT " + fields.join(",") + " FROM \"" + table + "\""; 
+	    
+	// do conditions here
+	var conditions =  this._route_conditions(parse);
+
+	if( conditions.length > 0){
+	    sql = sql + " WHERE ";
+	    // could do more sophisticated stuff here,  but for now
+	    // just AND together our conditions
+	    sql = sql + conditions.join(" AND ");
+	}
+	// debug
+	sql = sql + ";";
+	
+	return sql;
     }
-    //msa,  min: 10180, max: 49740
+
     
     
 };
