@@ -47,6 +47,7 @@ var field_meta = {
 	       ["sic"],
 	       ["st"],
 	       ["sz"],
+	       ["msa"],
 	       ["sz","st"]	  
 	       ["sz","met"],
 	       ["sz","msa"],
@@ -130,6 +131,22 @@ module.exports = {
 
 	return tbl_parts.join("x");
     },
+
+    year_condition: function(year){
+	var re = new RegExp("\\d{1,4}", "g");
+	var key = "year2";
+	var years = year.match(re);
+	if(years.length == 1){
+	    return key + " = " + years[0];
+	} else if(years.length == 2){
+	    return key + " BETWEEN " + years[0] + " AND " + years[1];
+	} else if(years.length > 2){
+	    return key + " IN (" + years.join(", ") + ")";
+	}
+	return null;
+    },
+
+
     
     //Given a route component such as st065341
     //return a list of id's,  eg ['06', '53', '42']
@@ -137,8 +154,6 @@ module.exports = {
 	w = typeof w !== "undefined" ?  w : 2;
 
 	if(ld.str.startsWith(field, 'msa')) w = 5;
-
-	if(ld.str.startsWith(field, 'yr')) w = 4;
 
 	var re = new RegExp("\\d{1," + w +  "}", "g");
 
@@ -196,9 +211,11 @@ module.exports = {
 	    function(e){ return e != null; });
     },
     
-    route_query: function(type, route, fields){
+    route_query: function(type, route, additional_conditions, fields){
 	var table = this.route_table(type, route);
 	var parse = this.parse_route(type, route);
+
+	var extra_conditions = additional_conditions == "undefined" ? [] : additional_conditions;
 
 	// Handle fields to select on,  if not specified we default to '*'
 	// otherwise take the fields,  and pluck the keys from the parse to
@@ -214,8 +231,8 @@ module.exports = {
 	var sql = "SELECT " + fields.join(",") + " FROM \"" + table + "\""; 
 	    
 	// do conditions here
-	var conditions =  this._route_conditions(parse);
-
+	var conditions =  this._route_conditions(parse).concat(extra_conditions);
+	console.log(conditions);
 	if( conditions.length > 0){
 	    sql = sql + " WHERE ";
 	    // could do more sophisticated stuff here,  but for now

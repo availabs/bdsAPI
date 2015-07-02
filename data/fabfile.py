@@ -84,7 +84,50 @@ def setup_databases(fail=False):
             time.sleep(10)
             execute(setup_databases, True)
 
+@task
+def build_msa_table():
+    uri = 'postgresql://{}:{}@{}/firm'.format(db_user['user'], db_user['password'], env.host)
+    eng = create_engine(uri)
+    # SQL to create the msa table from the aggregate AGExMSA table
+    sql = """
+CREATE TABLE msa AS
+  SELECT
+    year2,
+    msa,
+    SUM( firms ) as firms,
+    SUM( estabs ) as estabs,
+    SUM ( emp ) as emp,
+    AVG( denom ) as denom,
+    SUM( estabs_entry ) as estabs_entry,
+    AVG( estabs_entry_rate ) as estabs_entry_rate,
+    SUM( estabs_exit ) as estabs_exit,
+    SUM( estabs_exit_rate ) as estabs_exit_rate,
+    SUM( job_creation ) as job_creation,
+    SUM( job_creation_births ) as job_creation_births,
+    SUM( job_creation_continuers ) as job_creation_continuers,
+    AVG( job_creation_rate_births ) as job_creation_rate_births,
+    AVG( job_creation_rate ) as job_creation_rate,
+    SUM( job_destruction ) as job_destruction,
+    SUM( job_destruction_deaths ) as job_destruction_deaths,
+    SUM( job_destruction_continuers ) as job_destruction_continuers,
+    AVG( job_destruction_rate_deaths ) as job_destruction_rate_deaths,
+    AVG( job_destruction_rate ) as job_destruction_rate,
+    SUM( net_job_creation ) as net_job_creation,
+    AVG( net_job_creation_rate ) as net_job_creation_rate,
+    AVG( reallocation_rate ) as reallocation_rate,
+    BIT_OR( d_flag ) as d_flag,
+    SUM( firmdeath_firms ) as firmdeath_firms,
+    SUM( firmdeath_estabs ) as firmdeath_estabs,
+    SUM( firmdeath_emp ) as firmdeath_emp
+  FROM
+    agexmsa
+  GROUP BY
+    msa, year2;
+    """
 
+    eng.execute(sql)
+    
+            
 @task
 def build_tables(test=False):
     for db_name, tuples in files.items():
@@ -156,4 +199,5 @@ def build_bds_data_container(name="bds_data"):
     execute(pull_files)
     execute(setup_databases)
     execute(build_tables)
+    execute(build_msa_table)
     execute(remove_postgres_container)
