@@ -28,7 +28,8 @@ module.exports = {
 
 	var sql = FieldService.route_query(type, path, additional_conditions);
 	FieldService._query_model(type).query(
-	    sql, function(err, data){
+	    sql,
+	    function(err, data){
 		var resp_obj = {"type": type,
 				"path": path,
 				"params": req.params.all(),
@@ -42,8 +43,10 @@ module.exports = {
 		    resp_obj["rowCount"] = 0;
 		    resp_obj['data'] = err;
 		} else {
+
+		    
 		    resp_obj["rowCount"] = data.rowCount;
-		    resp_obj["data"] =  data.rows.slice(0, 10).concat([".........."]).concat(data.rows.slice(data.rowCount - 10));
+		    resp_obj["data"] = GroupService.groupByMulti(data.rows, [function(n){ return n["year2"];}, function(n){ return n['msa']; }]);
 		}
 		return res.json(resp_obj);
 	    });

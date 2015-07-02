@@ -232,7 +232,6 @@ module.exports = {
 	    
 	// do conditions here
 	var conditions =  this._route_conditions(parse).concat(extra_conditions);
-	console.log(conditions);
 	if( conditions.length > 0){
 	    sql = sql + " WHERE ";
 	    // could do more sophisticated stuff here,  but for now
