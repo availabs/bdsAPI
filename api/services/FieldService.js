@@ -35,7 +35,8 @@ var field_meta = {
 	    "st": "state",
 	    "sz": "size",
 	    "isz": "isize",
-	    "sic": "sic1"
+	    "sic": "sic1",
+	    "yr": "year2"
 	}
     },
     
@@ -78,7 +79,8 @@ var field_meta = {
 		  "isz": "ifsize",
 		  "sic": "sic1",
 		  "met": "metro",
-		  "msa": "msa"
+		  "msa": "msa",
+		  "yr": "year2"
 	      }
 	     }
 };
@@ -97,7 +99,7 @@ module.exports = {
 	    return GenericEsta;
 	}
     },
-
+/*
     // type: one of 'firm' or 'esta'
     // field: one of 'sz', 'isz', 'age'
     // cb: call back taking one variable with an object
@@ -114,7 +116,7 @@ module.exports = {
 					      ld.map(data.rows, function(x){ return x['value']; })));
 				      });
     },
-    
+  */  
 
     //check if 'args' are a list of valid table identifiers
     // set theory for the win
@@ -132,21 +134,15 @@ module.exports = {
 	return tbl_parts.join("x");
     },
 
-    year_condition: function(year){
-	var re = new RegExp("\\d{1,4}", "g");
-	var key = "year2";
-	var years = year.match(re);
-	if(years.length == 1){
-	    return key + " = " + years[0];
-	} else if(years.length == 2){
-	    return key + " BETWEEN " + years[0] + " AND " + years[1];
-	} else if(years.length > 2){
-	    return key + " IN (" + years.join(", ") + ")";
-	}
-	return null;
+
+    get_keys: function(type, args){
+	return ld.map(ld.filter(args, function(arg){
+	    return ld.contains(ld.keys(field_meta[type]['pkeys']), arg);
+	}), function(arg){
+	    return field_meta[type]['pkeys'][arg];
+	});
     },
-
-
+    
     
     //Given a route component such as st065341
     //return a list of id's,  eg ['06', '53', '42']
@@ -154,6 +150,7 @@ module.exports = {
 	w = typeof w !== "undefined" ?  w : 2;
 
 	if(ld.str.startsWith(field, 'msa')) w = 5;
+	if(ld.str.startsWith(field, 'yr')) w = 4;
 
 	var re = new RegExp("\\d{1," + w +  "}", "g");
 
@@ -171,7 +168,12 @@ module.exports = {
 	var elements = typeof route == "string" ? route.split("/") : route;
 	
 	try{
-	    return this._table(type, ld.map(elements, this.field_type));
+	    return this._table(type,
+			       // filter year from the list if it exists
+			       ld.filter(
+				   ld.map(elements, this.field_type),
+				   function(f){
+				       return f != "yr";}));
 	} catch(err){
 	    // this should be a debug statement not a console log?
 	    // how does sails do debugging?
@@ -200,7 +202,13 @@ module.exports = {
 	    ld.map(parse,
 		   function(e){
 		       if(e['conditions'] == null) return null;
-		       // Add code here to manage year range
+		       // Add code here to manage year range,  this is only needed
+		       // if we're dealing with year and a length of 2,  otherwise
+		       // the default condition generation should be fine.
+		       if(e['field'] == 'yr' && e['conditions'].length == 2){
+			   return e['key'] + " BETWEEN " + e['conditions'][0] + " AND " + e['conditions'][1];
+		       }
+		       
 		       if(e['conditions'].length == 1){
 			   return e['key'] + " = '" + e['conditions'].join("") + "'";
 		       } else if (e['conditions'].length > 1){
@@ -211,11 +219,9 @@ module.exports = {
 	    function(e){ return e != null; });
     },
     
-    route_query: function(type, route, additional_conditions, fields){
+    route_query: function(type, route, fields){
 	var table = this.route_table(type, route);
 	var parse = this.parse_route(type, route);
-
-	var extra_conditions = additional_conditions == "undefined" ? [] : additional_conditions;
 
 	// Handle fields to select on,  if not specified we default to '*'
 	// otherwise take the fields,  and pluck the keys from the parse to
@@ -231,7 +237,8 @@ module.exports = {
 	var sql = "SELECT " + fields.join(",") + " FROM \"" + table + "\""; 
 	    
 	// do conditions here
-	var conditions =  this._route_conditions(parse).concat(extra_conditions);
+	var conditions =  this._route_conditions(parse);
+
 	if( conditions.length > 0){
 	    sql = sql + " WHERE ";
 	    // could do more sophisticated stuff here,  but for now
@@ -243,6 +250,7 @@ module.exports = {
 	
 	return sql;
     }
+  
 
     
     

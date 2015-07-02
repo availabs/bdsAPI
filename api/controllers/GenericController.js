@@ -14,19 +14,15 @@ module.exports = {
 
     
     debug: function(req, res){
-//	console.log(req.params.all());
 	var path = req.param("0").split("/");
 	var type = req.originalUrl.slice(1).split("/")[0];
 
 	if( !(FieldService.route_table(type, path)) )
 	    return res.notFound();
 
-	var additional_conditions = [];
-	if( req.param("year") ){
-	    additional_conditions = FieldService.year_condition(req.param("year"));
-	}
 
-	var sql = FieldService.route_query(type, path, additional_conditions);
+	var sql = FieldService.route_query(type, path);
+	
 	FieldService._query_model(type).query(
 	    sql,
 	    function(err, data){
@@ -36,7 +32,6 @@ module.exports = {
 				"parsed": FieldService.parse_route(type, path),
 				"table": FieldService.route_table(type, path),
 				"parse_conditions": FieldService._route_conditions(path),
-				"additional_conditions": additional_conditions,
 				"query": sql};
 
 		if(err){
@@ -44,9 +39,21 @@ module.exports = {
 		    resp_obj['data'] = err;
 		} else {
 
-		    
 		    resp_obj["rowCount"] = data.rowCount;
-		    resp_obj["data"] = GroupService.groupByMulti(data.rows, [function(n){ return n["year2"];}, function(n){ return n['msa']; }]);
+		    resp_obj["data"] = GroupService.groupByMulti(
+			data.rows,
+			GroupService.path_groupby_accessors(
+			    FieldService.get_keys(
+				type, ld.map(path, FieldService.field_type))));
+								 
+/*		    resp_obj["data"] = GroupService.groupByMulti(data.rows,
+								 ld.filter(ld.map(path, function(field){
+								     return FieldService.field_type(p);
+								 }), function(p){ return p != "yr"; });
+
+								 //[function(n){ return n["year2"];}, function(n){ return n['msa']; }]
+								);
+*/
 		}
 		return res.json(resp_obj);
 	    });
