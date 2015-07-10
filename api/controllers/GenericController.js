@@ -13,10 +13,17 @@ module.exports = {
 	var path = req.param("0").split("/");
 	var type = req.originalUrl.slice(1).split("/")[0];
 
+	var fields = req.param("fields", []);
+	if( typeof fields === 'string' ) {
+	    fields = [ fields ];
+	}
+	fields = ld.intersection(FieldService.valid_columns, fields);
+	console.log(fields);
+
 	if( !(FieldService.route_table(type, path)) )
 	    return res.notFound();
 
-	var sql = FieldService.route_query(type, path);
+	var sql = FieldService.route_query(type, path, fields);
 
 	return FieldService._query_model(type).query(
 	    sql,

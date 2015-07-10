@@ -88,6 +88,41 @@ var field_meta = {
     
 
 module.exports = {
+
+    valid_columns: [
+	"year2",
+	"sic1",
+	"size",
+	"fsize",
+	"age4",
+	"fage4",
+	"firms",
+	"estabs",
+	"emp",
+	"denom",
+	"estabs_entry",
+	"estabs_entry_rate",
+	"estabs_exit",
+	"estabs_exit_rate",
+	"job_creation",
+	"job_creation_births",
+	"job_creation_continuers",
+	"job_creation_rate_births",
+	"job_creation_rate",
+	"job_destruction_deaths",
+	"job_destruction_continuers",
+	"job_destruction_rate_deaths",
+	"job_destruction_rate",
+	"net_job_creation",
+	"net_job_creation_rate",
+	"reallocation_rate",
+	"d_flag",
+	"firmdeath_firms",
+	"firmdeath_estabs",
+	"firmdeath_emp",
+	"metro",
+	"msa"],
+
     _field_meta: function(){
 	return field_meta;
     },
@@ -230,9 +265,9 @@ module.exports = {
 	// Handle fields to select on,  if not specified we default to '*'
 	// otherwise take the fields,  and pluck the keys from the parse to
 	// make sure they are included for later grouping
-	if( typeof fields !== "undefined"){
-	    // Currently untested!
-	    fields.push.apply(fields, ld.pluck(parse, "key"));
+	if( typeof fields !== "undefined" && fields.length > 0){
+	    // Always include year2
+	    fields = ['year2'].concat(ld.pluck(parse, "key").concat(fields));
 	    fields = ld.uniq(fields);
 	} else {
 	    fields = ["*"];
