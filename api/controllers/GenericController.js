@@ -9,7 +9,28 @@ var ld = sails.util._;
 module.exports = {
 
     parse: function(req, res){
-	return;
+	var flat = req.param("flat");
+	var path = req.param("0").split("/");
+	var type = req.originalUrl.slice(1).split("/")[0];
+
+	if( !(FieldService.route_table(type, path)) )
+	    return res.notFound();
+
+	var sql = FieldService.route_query(type, path);
+
+	return FieldService._query_model(type).query(
+	    sql,
+	    function(err, data){
+		
+		if(err) return res.json(err);
+		if(flat) return res.json(data.rows);
+
+		return res.json(GroupService.groupByMulti(
+		    data.rows,
+		    GroupService.path_groupby_accessors(
+			FieldService.get_keys(
+			    type, ld.map(path, FieldService.field_type)))));
+	    });
     },
 
     

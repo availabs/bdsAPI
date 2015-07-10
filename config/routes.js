@@ -44,11 +44,14 @@ module.exports.routes = {
     "GET /establishment/codes": 'CodesController.establishment_codes',
     "GET /establishment/codes/:type": 'CodesController.establishment_codes',
     
-    "GET /firm/*": 'GenericController.debug',
-    "GET /establishment/*": 'GenericController.debug',
+    "GET /firm/*": 'GenericController.parse',
+    "GET /establishment/*": 'GenericController.parse',
 
-    "GET /test": 'TestController.test',
-    "GET /test/*": 'TestController.test'
+    "GET /debug/firm/*": 'GenericController.debug',
+    "GET /debug/establishment/*": 'GenericController.debug'
+    
+//    "GET /test": 'TestController.test',
+//    "GET /test/*": 'TestController.test'
 
 
     
