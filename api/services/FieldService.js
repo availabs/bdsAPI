@@ -99,24 +99,28 @@ module.exports = {
 	    return GenericEsta;
 	}
     },
-/*
-    // type: one of 'firm' or 'esta'
+
+    // type: one of 'firm' or 'establishment'
     // field: one of 'sz', 'isz', 'age'
     // cb: call back taking one variable with an object
     //     that will be of type {"code": "value", ... }
     with_codes: function(type, field, cb){
-	
+
+	// Should be doing better error checking here to prevent things like selecting from "undefined_codes"
 	var sql = "SELECT \"code\", \"value\" FROM \"" + field_meta[type]["pkeys"][field] + "_codes\"";
 	
 	this._query_model(type).query(sql,
 				      function(err, data){
-					  // Should do some kind of error checking here
-					  cb(ld.zipObject(
-					      ld.map(data.rows, function(x){ return ld.str.lpad(x['code'], 2, "0"); }),
-					      ld.map(data.rows, function(x){ return x['value']; })));
+					  if(err){
+					      cb(err);
+					  } else {
+					      cb(ld.zipObject(
+						  ld.map(data.rows, function(x){ return ld.str.lpad(x['code'], 2, "0"); }),
+						  ld.map(data.rows, function(x){ return x['value']; })));
+					  }
 				      });
     },
-  */  
+
 
     //check if 'args' are a list of valid table identifiers
     // set theory for the win
