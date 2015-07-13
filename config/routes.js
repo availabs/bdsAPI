@@ -49,6 +49,7 @@ module.exports.routes = {
 
     "GET /debug/firm/*": 'GenericController.debug',
     "GET /debug/establishment/*": 'GenericController.debug'
+
     
 //    "GET /test": 'TestController.test',
 //    "GET /test/*": 'TestController.test'

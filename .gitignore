@@ -122,3 +122,4 @@ data/establishment_files/
 *.pyc
 *~
 /api/controllers/TestController.js
+production.js
