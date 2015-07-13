@@ -1,7 +1,7 @@
 db_user = {"user": "bds_user",
            "password": "letmein"}
 files = {
-    "firm": [
+    "bds_firm": [
         ("EW",
          "http://www2.census.gov/ces/bds/firm/",
          "bds_f_all_release.csv"),
@@ -90,7 +90,7 @@ files = {
          "http://www2.census.gov/ces/bds/firm/age_initial_size_metro_st/",
          "bds_f_ageiszmetro_state_release.csv")],
 
-    "establishment": [
+    "bds_establishment": [
         ("EW",
          "http://www2.census.gov/ces/bds/estab/",
          "bds_e_all_release.csv"),
@@ -148,7 +148,7 @@ files = {
 }
 
 replace_codes = {
-    "establishment": {
+    "bds_establishment": {
         "size": {
             "a) 1 to 4": 0,
             "b) 5 to 9": 1,
@@ -187,7 +187,7 @@ replace_codes = {
             "k) 26+": 10,
             "l) Left Censored": 11}
     },
-    "firm": {
+    "bds_firm": {
         "ifsize": {
             "a) 1 to 4": 0,
             "b) 5 to 9": 1,

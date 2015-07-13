@@ -1,6 +1,7 @@
 import time
 from fabric.api import *
-from fabric.context_managers import cd, settings, quiet
+from fabric.context_managers import cd, settings, quiet, lcd
+from fabric.contrib.files import exists
 import os
 from config import files, db_user, replace_codes
 import sqlalchemy
@@ -8,29 +9,27 @@ from sqlalchemy import create_engine
 import pandas as pd
 import psycopg2
 import sys
-
+from getpass import getpass
 sys.dont_write_bytecode = True
 
-env.hosts = ['localhost']
-
+#env.hosts = ['localhost']
 
 @task
 def pull_files(test=False):
     for name in files.keys():
-        try:
-            os.makedirs("/tmp/{}_files".format(name))
-        except OSError:
-            pass
+        with settings(warn_only=True):
+            local("mkdir /tmp/{}_files".format(name))
 
-        with cd("/tmp/{}_files/".format(name)):
+        with lcd("/tmp/{}_files/".format(name)):
             for tbl_name, url, fn in files[name]:
                 if not os.path.exists("/tmp/{}_files/{}".format(name, fn)):
-                    run("wget {}".format(os.path.join(url, fn)))
+                    local("wget {}".format(os.path.join(url, fn)))
 
 
 @task
 def teardown_databases():
-    eng = create_engine('postgresql://postgres@{}/postgres'.format(env.host),
+    password = getpass("Please enter postgres user password for {}: ".format(env.host))
+    eng = create_engine('postgresql://postgres:{}@{}/postgres'.format(password, env.host),
                         isolation_level='AUTOCOMMIT')
 
     with eng.connect() as conn:
@@ -41,8 +40,8 @@ def teardown_databases():
             except sqlalchemy.exc.ProgrammingError:
                 print "Notice: User {user} does not exist!".format(**db_user)
                 
-#        for k in files.keys():
-#            conn.execute("DROP DATABASE IF EXISTS {}".format(k))
+        for k in files.keys():
+            conn.execute("DROP DATABASE IF EXISTS {}".format(k))
 
  
 
@@ -50,7 +49,8 @@ def teardown_databases():
 
 @task
 def setup_databases(fail=False):
-    eng = create_engine('postgresql://postgres@{}/postgres'.format(env.host),
+    password = getpass("Please enter postgres user password for {}: ".format(env.host))
+    eng = create_engine('postgresql://postgres:{}@{}/postgres'.format(password, env.host),
                         isolation_level='AUTOCOMMIT')
     try:
         with eng.connect() as conn:
@@ -86,7 +86,7 @@ def setup_databases(fail=False):
 
 @task
 def build_msa_table():
-    uri = 'postgresql://{}:{}@{}/firm'.format(db_user['user'], db_user['password'], env.host)
+    uri = 'postgresql://{}:{}@{}/bds_firm'.format(db_user['user'], db_user['password'], env.host)
     eng = create_engine(uri)
     # SQL to create the msa table from the aggregate AGExMSA table
     sql = """
@@ -150,7 +150,7 @@ def build_tables(test=False):
             # codes can be found in age4_codes, fage4_codes, etc
             df.replace(replace_codes[db_name], inplace=True)
             
-            df.to_sql(table_name.lower(), eng, chunksize=20000, index=False)
+            df.to_sql(table_name.lower(), eng, chunksize=100000, index=False)
             
             print "Finished building {}:{} ({})".format(db_name, table_name,
                                                         time.time() - t0)
@@ -201,3 +201,10 @@ def build_bds_data_container(name="bds_data"):
     execute(build_tables)
     execute(build_msa_table)
     execute(remove_postgres_container)
+
+@task
+def build_bds():
+    execute(pull_files)
+    execute(setup_databases)
+    execute(build_tables)
+    execute(build_msa_table)
