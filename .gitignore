@@ -123,3 +123,5 @@ data/establishment_files/
 *~
 /api/controllers/TestController.js
 production.js
+*.org
+/api/services/.tern-port

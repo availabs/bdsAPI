@@ -1,5 +1,41 @@
+#  The MIT License (MIT)
+#
+#  Copyright (c) 2015 Christopher Kotfila
+#
+#  Permission is hereby granted, free of charge, to any person obtaining a copy
+#  of this software and associated documentation files (the "Software"), to deal
+#  in the Software without restriction, including without limitation the rights
+#  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#  copies of the Software, and to permit persons to whom the Software is
+#  furnished to do so, subject to the following conditions:
+#
+#  The above copyright notice and this permission notice shall be included in
+#  all copies or substantial portions of the Software.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+#  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+#  THE SOFTWARE.
+#
+
+# Database user information for the BDS firm and establishment databases
+#
+# @param db_user
+#
+# CONSIDER: putting this into some kind of seperate ignored configuration
+#           file. Otherwise it represents a pretty serious security risk.
+#
 db_user = {"user": "bds_user",
            "password": "letmein"}
+
+# Files is a dict with two keys which will be used as the database names
+# for the BDS firm data and the establishment data.  The values of these
+# keys are an array of tuples,  each tuple is (TABLE_NAME, URL, CSV_FILE)
+#
+# @param {Dict} files
 files = {
     "bds_firm": [
         ("EW",
@@ -147,6 +183,11 @@ files = {
          "bds_e_ageisz_st_release.csv")]
 }
 
+# Pandas dict used to replace the strings contained in
+# various CSV files,  these are also used to create the
+# codes database tables.
+# 
+# @param {Dict} replace_codes
 replace_codes = {
     "bds_establishment": {
         "size": {
