@@ -9,7 +9,7 @@
   - [Firm Size & Initial Firm Size](#sec-5-2)
   - [Establishment Age](#sec-5-3)
   - [Establishment Size and Initial Establishment Size](#sec-5-4)
-- [Additional Paramaters](#sec-6)
+- [Additional Parameters](#sec-6)
 - [Notes for Developers](#sec-7)
 
 # Introduction<a id="sec-1" name="sec-1"></a>
@@ -18,9 +18,9 @@ This repository contains code for an JSON API to the Buisness Dynamics Statistic
 
 # Dynamic Routes<a id="sec-2" name="sec-2"></a>
 
-BDS data is aggregate yearly timeseries job birth and job death information derived from the Longitudinal Buisness Database.  It is broken down by firms and establishments,  and then by increasingly specific sub-groups such as state,  age of firm,  top level sic codes and metropolitan statistical areas. Data is provided in ~50 CSV files that begin with the Economy Wide statistics and at their most specific are broken down by Firm Age, Firm Size, Metro/Non-Metro and State.    
+BDS data is aggregate yearly time series job birth and job death information derived from the Longitudinal Buisness Database.  It is broken down by firms and establishments,  and then by increasingly specific sub-groups such as state,  age of firm,  top level sic codes and metropolitan statistical areas. Data is provided in ~50 CSV files that begin with the Economy Wide statistics and at their most specific are broken down by Firm Age, Firm Size, Metro/Non-Metro and State.    
 
-Dynamic Routes in the `bdsAPI` allow clients to query this information based on increasingly specific subgroups given that the subgroup combination is made available by the census bureau. Routes return a JSON object.  Unless otherwise specified by the `flat` paramater routes will return an object that groups row data in the order of the dynamic route.  This means clients may request job birth/death broken down by firm age (`/firm/age`) and then based on user actions,  request job birth/death broken down by firm age and size (`/firm/age/sz`). Conversely `/firm/sz/age` will provide breakdowns of job birth/deaths based on firm size,  then firm age.  This is suppoted by the fact that the census bureau provides an AGExSZ CSV file that contains this information. It is not, for instance,  possible to request establishment breakdowns by state and SIC code (`/establishment/st/sic`) - The census bureau does not provide this information.    
+Dynamic Routes in the `bdsAPI` allow clients to query this information based on increasingly specific subgroups given that the subgroup combination is made available by the census bureau. Routes return a JSON object.  Unless otherwise specified by the `flat` parameter routes will return an object that groups row data in the order of the dynamic route.  This means clients may request job birth/death broken down by firm age (`/firm/age`) and then based on user actions,  request job birth/death broken down by firm age and size (`/firm/age/sz`). Conversely `/firm/sz/age` will provide breakdowns of job birth/deaths based on firm size,  then firm age.  This is supported by the fact that the census bureau provides an AGExSZ CSV file that contains this information. It is not, for instance,  possible to request establishment breakdowns by state and SIC code (`/establishment/st/sic`) - The census bureau does not provide this information.    
 
 Here are the lists of the valid URI segments that may be combined along with their coorisponding database table and descriptions (keep in mind that URI segments may be combined in any order):   
 
@@ -399,13 +399,13 @@ Here are the lists of the valid URI segments that may be combined along with the
 
 # Additional Route Segments<a id="sec-3" name="sec-3"></a>
 
-BDS data is panel data begining in 1977. By default the leafs of the hierarchical response object will be lists containing objects for each year. This may not be the desired functionality and so it is possible to treat 'yr' as a URI segment that may be added at any level to any of the previous dynamic routes. e.g. `/firm/age/yr/sz`  will return a breakdown of firms by age,  then by year,  then by size.   
+BDS data is panel data beginning in 1977. By default the leafs of the hierarchical response object will be lists containing objects for each year. This may not be the desired functionality and so it is possible to treat 'yr' as a URI segment that may be added at any level to any of the previous dynamic routes. e.g. `/firm/age/yr/sz`  will return a breakdown of firms by age,  then by year,  then by size.   
 
 The Census bureau does not provide an `msa` table for firms,  though it does provide breakdowns for MSA by age, by size and by age and size.  The fabric deployment script will aggregate the AGExMSA table values to create an MSA table which is available at `/firm/msa.` It is recommended that clients subject this route conditions (See Next Section).
 
 # Route Conditions<a id="sec-4" name="sec-4"></a>
 
-Endpoints may (and in most cases should) be subjected to conditions which reduce the over all size of the data returned (AGExSZxMSA for instance is over 100Mb of text).  This can by done by including zero filled numbers to the end of any URI segment that coorispond to the codes of that URI element (codes may be found in the Code section).  For example the URI:    
+Endpoints may (and in most cases should) be subjected to conditions which reduce the over all size of the data returned (AGExSZxMSA for instance is over 100Mb of text).  This can by done by including zero filled numbers to the end of any URI segment that correspond to the codes of that URI element (codes may be found in the Code section).  For example the URI:    
 
 `/firm/age01/msa0102301024/sz020310`
 
@@ -427,7 +427,15 @@ Where age is subjected to the condition 'age = "01"', msa is subject to the cond
 
 # Codes<a id="sec-5" name="sec-5"></a>
 
-States follow FIPS two digit codes. MSA codes follow the numeric codes for metropolitain statistical areas as established by the Office of Management and Budget (OMB), version 2009. All other codes are as follows:  
+States follow FIPS two digit codes. MSA codes follow the numeric codes for metropolitan statistical areas as established by the Office of Management and Budget (OMB), version 2009. Codes may be pulled dynamically at the following routes:
+
+-   `/codes`
+-   `/firm/codes`
+-   `/establishment/codes`
+-   `/firm/codes/:type`
+-   `/establishment/codes:type`
+
+For reference codes are as follows:  
 
 ## Firm Age<a id="sec-5-1" name="sec-5-1"></a>
 
@@ -775,7 +783,7 @@ States follow FIPS two digit codes. MSA codes follow the numeric codes for metro
 </tbody>
 </table>
 
-# Additional Paramaters<a id="sec-6" name="sec-6"></a>
+# Additional Parameters<a id="sec-6" name="sec-6"></a>
 
 If this hierarchical behavior is not desirable data may be returned as a list of rows by passing the GET argument 'flat' equal to any non falsy value.  For example:
 
@@ -789,7 +797,7 @@ Multiple fields may be selected by adding additional fields variables, e.g.
 
 `firm/age01/msa0102301024/sz020310?fields=job_creation&fields=job_death&fields=job_creation_rate`
 
-PLEASE NOTE:  the current parse function does not support paging ( it is not clear the best way to page through a hierarchical object).  This means it is possible to request data that takes a very long time to return and may CRASH the browser if loaded into memory.  It is (currently) the client's responsbility to request reasonable amounts of data!
+PLEASE NOTE:  the current parse function does not support paging ( it is not clear the best way to page through a hierarchical object).  This means it is possible to request data that takes a very long time to return and may CRASH the browser if loaded into memory.  It is (currently) the client's responsibility to request reasonable amounts of data!
 
 # Notes for Developers<a id="sec-7" name="sec-7"></a>
 
@@ -797,8 +805,8 @@ The source code contains extensive documentation on each function and developers
 
 Scattered through the comments are `TODO` and `CONSIDER` statements.  TODO statements suggest a code area that should be improved, usually with minimal effort.  These often include better error checking.  CONSIDER statements are more design oriented and suggest ways in which the API or deployment code could be usefully improved or extended.   
 
-By convention functions that lead with an underscore ('<sub>'</sub>)  are intended for within-module use.  You are welcome to use them if you wish but their internal functionality and signatures are not intended to be stable. 
+By convention functions that lead with an underscore are intended for within-module use.  You are welcome to use them if you wish but their internal functionality and signatures are not intended to be stable. 
 
-The dynamic routing of field elements circumvents the traditional routing and model design of a sails application. The BDS data does not lend itself to traditional object hierarchies that map well to relational databases.  Because of this models are used only for their generic SQL `query()` method.  Generating this SQL is the router responsiblity of the router, who converts all URI segments after the `/firm` and `/establishment` parts to this custom SQL query.  The guts of this transformation have been abstracted into a Sails [service](http://sailsjs-documentation.readthedocs.org/en/latest/concepts/Services/) `FieldService.js`. This file contains more documentation,  but consider starting by looking at the `route_table()` and the `route_query()` methods. Once SQL rows have been returned the API will group them hierarchically based on the order of the URI segments.  This code is relatively small,  but is managed from a seperate file `GroupService.js`. 
+The dynamic routing of field elements circumvents the traditional routing and model design of a sails application. The BDS data does not lend itself to traditional object hierarchies that map well to relational databases.  Because of this models are used only for their generic SQL `query()` method.  Generating this SQL is the router responsibility of the router, who converts all URI segments after the `/firm` and `/establishment` parts to this custom SQL query.  The guts of this transformation have been abstracted into a Sails [service](http://sailsjs-documentation.readthedocs.org/en/latest/concepts/Services/) `FieldService.js`. This file contains more documentation,  but consider starting by looking at the `route_table()` and the `route_query()` methods. Once SQL rows have been returned the API will group them hierarchically based on the order of the URI segments.  This code is relatively small,  but is managed from a separate file `GroupService.js`. 
 
-Fabric deployment of the database relies heavily on the [Pandas](http://pandas.pydata.org/) python library for data I/O  and munging. Pandas provides methods for reading from CSV files and writing SQL to databases.  Database connections are managed through [SQLAlchemy](http://www.sqlalchemy.org/) engines. To ensure library support for the munging operations files,  census bureau files will be downloaded into the temporary directory of the **launching** computer,  rather than the remote host that id being deployed too. 
+Fabric deployment of the database relies heavily on the [Pandas](http://pandas.pydata.org/) python library for data I/O  and munging. Pandas provides methods for reading from CSV files and writing SQL to databases.  Database connections are managed through [SQLAlchemy](http://www.sqlalchemy.org/) engines. To ensure library support for the munging operations files,  census bureau files will be downloaded into the temporary directory of the **launching** computer,  rather than the remote host that is being deployed too. 
