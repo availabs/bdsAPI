@@ -2,19 +2,19 @@
  * FieldService.js
  *
  * The MIT License (MIT)
- * 
+ *
  * Copyright (c) 2015 Christopher Kotfila
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -22,7 +22,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
 */
 
 /**
@@ -76,7 +76,7 @@ var field_meta = {
 	    "yr": "year2"
 	}
     },
-    
+
     "firm":  {
 	"combinations":[["age"],
 			["ew"],
@@ -86,7 +86,7 @@ var field_meta = {
 			["st"],
 			["sz"],
 			["msa"],
-			["sz","st"]	  
+			["sz","st"]
 			["sz","met"],
 			["sz","msa"],
 			["sz","sic"],
@@ -101,14 +101,14 @@ var field_meta = {
 			["isz","met"],
 			["age","sz","st"],
 			["age","isz","st"],
-			["age","sz","met"],	  
+			["age","sz","met"],
 			["age","sz","msa"],
 			["age","sz","sic"],
 			["age","isz","sic"],
 			["age","isz","met"],
 			["age","sz","met","st"],
 			["age","isz","met","st"]],
-	
+
 	"pkeys": {
 	    "age": "fage4",
 	    "st": "state",
@@ -122,7 +122,7 @@ var field_meta = {
     }
 };
 
-    
+
 module.exports = {
     /**
       * Set of all valid column strings for both firm and establishment databases
@@ -148,6 +148,7 @@ module.exports = {
 	"job_creation_continuers",
 	"job_creation_rate_births",
 	"job_creation_rate",
+  "job_destruction",
 	"job_destruction_deaths",
 	"job_destruction_continuers",
 	"job_destruction_rate_deaths",
@@ -169,7 +170,7 @@ module.exports = {
      * @return {Object}
      */
     _field_meta: function(){
-	return field_meta;	
+	return field_meta;
     },
 
     /**
@@ -189,7 +190,7 @@ module.exports = {
     },
     /**
      * Make an SQL query to pull the code & values from the database
-     * fields that have codes (e.g.,  'sz', 'isz' and 'age'). 
+     * fields that have codes (e.g.,  'sz', 'isz' and 'age').
      *
      * @param {String} type - one of 'firm' or 'establishment'
      * @param {String} field - one of 'sz', 'isz', 'age' these are the URL elements
@@ -201,7 +202,7 @@ module.exports = {
 
 	// TODO: Should be doing better error checking here to prevent things like selecting from "undefined_codes"
 	var sql = "SELECT \"code\", \"value\" FROM \"" + field_meta[type]["pkeys"][field] + "_codes\"";
-	
+
 	this._query_model(type).query(sql,
 				      function(err, data){
 					  if(err){
@@ -218,9 +219,9 @@ module.exports = {
 
     /**
      * Check if 'args' are a list of valid table identifiers regardless of order.
-     * 
+     *
      * @param {String} type - one of 'firm' or 'establishment'
-     * @param {Array} args - a list of strings with non-conditioned 
+     * @param {Array} args - a list of strings with non-conditioned
      *                       url entities (e.g.,  'st'  not 'st06')
      * @return {Array|undefined}  the correctly ordered array (from field_meta)
      *                            based on valid url elements in args,  or undefined
@@ -230,13 +231,13 @@ module.exports = {
 	    return ld.xor(args, lst).length == 0;
 	});
     },
-    
+
     /**
      * Return the correct table name based on the list of entity strings
      * these entity strings (e.g.,  "age", "isz", "msa", etc)  may be in any
      * order.  Throw an error if the strings are not a valid combination of entities
      * as defined by the values in field_meta
-     * 
+     *
      * @param {String} type - one of 'firm' or 'establishment'
      * @param {Array} args - a list of strings
      * @return {String} the table name
@@ -252,10 +253,10 @@ module.exports = {
     /**
      * This function returns a list of the column names for a particular database
      * (e.g., "age4", "isize", etc)  for a list of url entities (e.g., 'age', 'isz')
-     * 
+     *
      * @param {String} type - one of 'firm' or 'establishment'
      * @param {Array} args - a list of strings
-     * @return {Array} column names 
+     * @return {Array} column names
      */
     get_keys: function(type, args){
 	// First filter 'args'  to ensure it only contains valid keys before mapping
@@ -265,7 +266,7 @@ module.exports = {
 		      function(arg){
 			  return field_meta[type]['pkeys'][arg];});
     },
-    
+
     /**
      * Given a route component such as st065341 return a list of id's,  eg ['06', '53', '42']
      *
@@ -282,7 +283,7 @@ module.exports = {
      *           warning or possibly throw an exception.  condition values of malformed length
      *           are sure to evaluate to false which may cause the entire query to return
      *           nothing.
-     */ 
+     */
     field_conditions: function(field, w){
 	// By default assume length two
 	w = typeof w !== "undefined" ?  w : 2;
@@ -295,13 +296,13 @@ module.exports = {
 	// build a Regex that identifys the first integer and captures
 	// sequences of integers of length 'w'
 	var re = new RegExp("\\d{1," + w +  "}", "g");
-	
+
 	return field.match(re);
 
     },
     /**
      * Given a route component such as st065341 return the element string 'st'
-     * 
+     *
      * @param {String} field - string containing a url path element
      * @return {String}
      **/
@@ -315,9 +316,9 @@ module.exports = {
      * Given a route string that has been stripped of leading 'firm' or 'establishment'
      * parts return the table name for the url elements specified in that table, otherwise
      * throw an exception. This should return the table name regardless of conditions on
-     * those url elements and will ignore the year ('yr') element. 
+     * those url elements and will ignore the year ('yr') element.
      * Eg:
-     * 
+     *
      * sails> FieldService.route_table("firm", "msa/age010203/sz06")
      * 'agexszxmsa'
      *
@@ -328,11 +329,11 @@ module.exports = {
      * @param {String} type - one of 'firm' or 'establishment'
      * @param {String} route - part of the route containing the url elements
      * @return {String|undefined} database table name or undefined
-     * 
+     *
      */
     route_table: function(type, route){
 	var elements = typeof route == "string" ? route.split("/") : route;
-	
+
 	try{
 	    return this._table(type,
 			       // filter year ('yr') from the list if it exists
@@ -379,10 +380,10 @@ module.exports = {
      * - The condition is null:
      *   Skip it
      *
-     * - The condition has one value: 
+     * - The condition has one value:
      *   Create SQL like:  "KEY = 'VALUE'"
      *
-     * - The condition has more than one value: 
+     * - The condition has more than one value:
      *   Create SQL like: "KEY IN ('VALUE1', 'VALUE2', ...)"
      *
      * If the key is 'year' then we manage a special condition where there
@@ -408,7 +409,7 @@ module.exports = {
      *           in field_meta and handled here to improve portability of the
      *           generated SQL.
      */
-    _route_conditions: function(parse){	
+    _route_conditions: function(parse){
 	return ld.filter(
 	    ld.map(parse,
 		   function(e){
@@ -419,7 +420,7 @@ module.exports = {
 		       if(e['field'] == 'yr' && e['conditions'].length == 2){
 			   return e['key'] + " BETWEEN " + e['conditions'][0] + " AND " + e['conditions'][1];
 		       }
-		       
+
 		       if(e['conditions'].length == 1){
 			   return e['key'] + " = '" + e['conditions'].join("") + "'";
 		       } else if (e['conditions'].length > 1){
@@ -430,11 +431,11 @@ module.exports = {
 	    function(e){ return e != null; });
     },
 
-    /** 
+    /**
      * This function takes a type and a route and produces a full SQL query string
-     * for execution against the database,  it relies heavily on 
+     * for execution against the database,  it relies heavily on
      * FieldServices.route_table() and FieldServices.parse_route() logic.  An array
-     * of fields may also be included    
+     * of fields may also be included
      *
      * @param {String} type - One of 'establishment' or 'firm'
      * @param {String} route - A string containing the dynamic portion of the route
@@ -446,7 +447,7 @@ module.exports = {
 	var parse = this.parse_route(type, route);
 
 	// Handle fields to select on,  if not specified we default to '*'
-	// otherwise take use the fields varible, we also pluck the keys from 
+	// otherwise take use the fields varible, we also pluck the keys from
 	// the parse to make sure they are included for later grouping. Field order
 	// is not garunteed
 	if( typeof fields !== "undefined" && fields.length > 0){
@@ -457,8 +458,8 @@ module.exports = {
 	    fields = ["*"];
 	}
 
-	var sql = "SELECT " + fields.join(",") + " FROM \"" + table + "\""; 
-	    
+	var sql = "SELECT " + fields.join(",") + " FROM \"" + table + "\"";
+
 	// Pull the route conditions
 	var conditions =  this._route_conditions(parse);
 
@@ -471,11 +472,11 @@ module.exports = {
 	}
 
 	sql = sql + ";";
-	
+
 	return sql;
     }
-  
 
-    
-    
+
+
+
 };
