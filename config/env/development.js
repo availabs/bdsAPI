@@ -20,25 +20,25 @@ module.exports = {
 
 
     connections: {
-  bds_establishment: {
-      adapter: 'sails-postgresql',
-      host: 'mars.availabs.org',
-      user: 'postgres',
-      password: 'Jedi21funk',
-      database: 'bds_establishment'
-  },
-  bds_firm: {
-      adapter: 'sails-postgresql',
-      host: 'mars.availabs.org',
-      user: 'postgres',
-      password: 'Jedi21funk',
-      database: 'bds_firm'
-  }
+      bds_establishment: {
+          adapter: 'sails-postgresql',
+          host: 'mars.availabs.org',
+          user: 'postgres',
+          password: 'Jedi21funk',
+          database: 'bds_establishment'
+      },
+      bds_firm: {
+          adapter: 'sails-postgresql',
+          host: 'mars.availabs.org',
+          user: 'postgres',
+          password: 'Jedi21funk',
+          database: 'bds_firm'
+      }
 
     },
 
     models: {
-  connection: 'localPostgresDB'
+      connection: 'localPostgresDB'
     }
 
 };
