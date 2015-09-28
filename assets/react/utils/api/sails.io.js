@@ -25,7 +25,7 @@ var io="undefined"==typeof module?{}:module.exports;(function(){(function(a,b){v
  */
 
 
-(function() {
+var socket = function() {
 
   // Save the URL that this script was fetched from for use below.
   // (skip this if this SDK is being used outside of the DOM, i.e. in a Node process)
@@ -819,4 +819,6 @@ var io="undefined"==typeof module?{}:module.exports;(function(){(function(a,b){v
   // global namespace, you can replace the global `io` with your own `io` here:
   return SailsIOClient();
 
-})();
+}();
+
+module.exports = socket;

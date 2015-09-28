@@ -1,0 +1,478 @@
+<link rel="stylesheet" href="/styles/docs.css">
+<!-- Docs master nav -->
+
+<div class="navbar2 navbar-fixed-top navbar-default">
+  <div class="container">
+    <div class="navbar2">
+      <button class="navbar-toggle" data-toggle="collapse" data-target="#main-nav">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://availabs.org/"><img src="/images/logo.png"></a>
+    </div>
+    <nav class="collapse navbar-collapse bs-navbar-collapse">
+      <ul class="nav navbar-nav">
+        <li>
+          <a href="/">API Documentation</a>
+        </li>
+        <li>
+          <a href="/zip_analysis/">Interactive</a>
+        </li> 
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="http://availabs.org/" target=_blank>Home</a></li>
+        <li><a href="http://availabs.org/about" target=_blank>About</a></li>
+        <li><a href="http://availabs.org/project" target=_blank>Projects</a></li>
+        <li><a href="http://availabs.org/api" target=_blank>APIs</a></li>
+        <li><a href="http://blog.availabs.org/" target=_blank>Blog</a></li>
+        <!-- <li class="dropdown"><a href="/about" class="dropdown-toggle" data-toggle="dropdown">About  <b class="caret"></b></a>
+          <ul class="dropdown-menu" role="menu">
+            <li><a href="/about">About Us</a></li>
+            <li><a href="/services">Services</a></li>
+            <li><a href="/login">Login</a></li>
+            <li><a href="/register">Register</a></li>
+            <li><a href="/faq">F.A.Q.</a></li>
+            <li><a href="/contact">Contact</a></li>
+          </ul>
+        </li>
+        <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Blog <b class="caret"></b></a>
+          <ul class="dropdown-menu" role="menu">
+            <li><a href="http://blog.availabs.org/" target=_blank>Blog</a></li>
+            <li class="divider"></li>
+            <li><a href="/blog-single">Blog single one</a></li>
+            <li><a href="/blog-single2">Blog single two</a></li>
+          </ul>
+        </li>
+        <li><a href="http://blog.availabs.org/" target=_blank>Blog</a></li>
+        <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Gallery <b class="caret"></b></a>
+          <ul class="dropdown-menu" role="menu">
+            <li><a href="/gallery">Simple gallery</a></li>
+            <li><a href="/gallery_text">With text</a></li>
+            <li class="divider"></li>
+            <li><a href="/project">Single project</a></li>
+          </ul>
+        </li>
+        <li><a href="/shortcodes">Shortcodes</a>
+        </li>-->
+      </ul>
+    </div>  
+  </div>  
+</div>
+
+<!--<header class="navbar navbar-static-top bs-docs-nav" id="top" role="banner">
+  <div class="container">
+    <div class="navbar-header">
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target=".bs-navbar-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="/" class="navbar-brand">Zip Business Patterns API</a>
+    </div>
+    <nav class="collapse navbar-collapse bs-navbar-collapse">
+      <ul class="nav navbar-nav">
+        <li>
+          <a href="/">API Documentation</a>
+        </li>
+        <li>
+          <a href="/zip_analysis/">Interactive</a>
+        </li>
+       
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="http://availabs.org">AVAIL</a></li>
+        <li><a href="http://blog.availabs.org">Blog</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<!-- Docs page layout -->
+<div class="bs-docs-header" id="content">
+   <div class="container">
+      <div class="col-md-8">
+      <h1>Zip Business Patterns</h1>
+      <p>A REST API for accessing the <a href="http://www.census.gov/econ/cbp/">Census Zip Business Patterns</a> dataset from 1994-2012.</p>
+      </div>
+      <div class="col-md-4">
+      <a href="http://www.kauffman.org/" target='blank'><img src="/images/kauffman.png"></a>
+      </div>
+   </div>
+
+</div>
+<div class="container bs-docs-container">
+   <div class="row">
+      <div class="col-md-9" role="main">
+
+         <div class="bs-docs-section">
+            <h1 id="overview" class="page-header">Overview</h1>
+            <h3 id="overview-about">About the Data</h3>
+            <p class="tab">County Business Patterns (CBP) is an annual series that provides subnational economic data by industry. This series includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll. This data is useful for studying the economic activity of small areas; analyzing economic changes over time; and as a benchmark for other statistical series, surveys, and databases between economic censuses. Businesses use the data for analyzing market potential, measuring the effectiveness of sales and advertising programs, setting sales quotas, and developing budgets. Government agencies use the data for administration and planning.</p>
+
+            <p class="tab">ZIP Code Business Patterns data is available shortly after the release of County Business Patterns. It provides the number of establishments by employment-size classes by detailed industry in the U.S.</p>
+
+            <p class="tab">These two programs cover most of the country's economic activity based on establishments, with a few noted exclusions. For more information on the coverage and methodology of CBP, see How the Data are Collected. For information on businesses without paid employees, see Nonemployer Statistics.
+            Data for 2012 were released in May 2014. For help accessing the data via hypertext tables or American FactFinder, please refer to the Data User Guide [PDF].</p>
+
+            <h3 id="overview-about-us">About Us</h3>
+            <p class="tab"> 
+              In December 2014, The Ewing Marion Kauffman Foundation awarded AVAIL with a grant to create an Entrepreneurial Landscape Analysis Tool that shows business climate change over time. This API is for allowing easy access to the Zip Business Patterns dataset(s) from the US census to be used for that webtool.
+            </p>
+            
+            <!-- 
+               End of Overview section
+            -->
+            <div class="bs-docs-section">
+            <h1 id="geo" class="page-header">Geography Routes</h1>
+             <h3 id="geo-zip">/zipcodes/:type/:fips</h3>
+              <p class="tab">Returns a list of zip codes. If no fips code is passed a list of all US zip codes is returned. <code>:type</code> specifies whether the fips code is for a metro area, county, or state. If <code>:type</code> is specified to be "metro", then all zip codes in that metro area are returned; the same applies for "county" and "state".</p>
+
+              <div class="zero-clipboard"><span class="btn-clipboard">Copy</span></div>
+              <div class="highlight">
+                 <pre><code class="language-html" data-lang="html"><span class="cp">http://zbpa.api.availabs.org/zipcodes </span></code></pre>
+
+              </div>
+
+              Output
+               <div class="highlight">
+                 <pre><code class="language-json" data-lang="json"><span class="cp">
+{
+  "data": [
+    "00501",
+    "01001",
+    "01002",
+    "01003",
+    "01004",
+    "01005",
+    ...
+    ]
+}
+    </span></code></pre>
+
+              </div>
+
+              <h3 id="geo-geo">/geozipcodes</h3>
+              <p class="tab">Returns a topojson of either the POSTed array of zipcodes or the POSTed fips code.</p>
+
+              <div class="zero-clipboard"><span class="btn-clipboard">Copy</span></div>
+              <div class="highlight">
+                 <pre><code class="language-html" data-lang="html"><span class="cp">http://zbpa.api.availabs.org/geozipcodes</span>
+<span class="s">required</span> <span class="nt">POST</span>: 
+<span class="na">zips - An array of zip codes ex {"zips": ["95014","95050"]} </span> 
+or
+<span class="na">fips- An object with attributes of FIPS code type (metro, county, or state) and FIPS code ex {"fips":{"type": "metro", "code": "63217"}}</span>
+                 </code></pre>
+
+              </div>
+
+              <h4>Output:</h4>
+               <div class="highlight">
+                 <pre><code class="language-json" data-lang="json"><span class="cp">
+{
+  "type":"Topology",
+  "transform":{
+    "scale":[0.0036000360003600037,0.0016925586033320111],
+    "translate":[-180,-85.60903777459777]
+    },
+  "objects":{
+    "land":{
+      "type":"MultiPolygon",
+      "arcs":[
+        ...   
+      ],
+      ...
+    } 
+    ...
+  }
+}
+
+    </span></code></pre>
+
+              </div>
+              
+            
+
+            <h3 id="geo-naics">/naics/:ncode</h3>
+            <p class="tab">Returns a list of naics codes related to <code>:ncode</code>, or all naics if no <code>:ncode</code> is provided.</p>
+            
+            <div class="highlight">
+                 <pre><code class="language-html" data-lang="html"><span class="cp">http://zbpa.api.availabs.org/naics/:ncode </span></code></pre>
+
+            </div>
+            <h4>Output:</h4>
+               <div class="highlight">
+                 <pre><code class="language-json" data-lang="json"><span class="cp">
+{
+  "data": [
+    "----",
+    "------",
+    "07--",
+    "0700",
+    "0710",
+    "0720",
+    "0740",
+    "0750",
+    "0760",
+    "0761",
+    ...
+  ] 
+}
+
+    </span></code></pre>
+
+              </div>
+              
+            </div>
+            <!-- 
+               End of Geography section
+            -->
+            <div class="bs-docs-section">
+              <h1 id="totals" class="page-header">Zip Business Patterns Totals Routes</h1>
+              <h3 id="totals-variables"><a href="https://www.census.gov/econ/cbp/download/noise_layout/State_Layout.txt">Variables <i>Avail</i>able:</a></h3>
+              <ul>
+                <li><code>annual_payroll</code>: The total annual payroll, in thousands of dollars, for a zipcode.</li>
+                <li><code>q1_payroll</code>: The total first quarter payroll, in thousands of dollars, for a zipcode.</li>
+                <li><code>employees</code>: The total mid-March employees for a zipcode.</li>
+                <li><code>establishments</code>: Total number of establishments for a zipcode.</li>
+              </ul>
+              <h3 id="totals-allyears">/totals/:variable_name/</h3>
+              
+              <p class="tab">Returns a list of the requested variable for each of the POSTed zip codes from 1994 to 2012 or for each of the zip codes within the specified FIPS code.</p>
+              <div class="zero-clipboard"><span class="btn-clipboard">Copy</span></div>
+              <div class="highlight">
+                 <pre><code class="language-html" data-lang="html"><span class="cp">http://zbpa.api.availabs.org/totals/:variable_name</span>
+<span class="s">required</span> <span class="nt">POST</span>: 
+<span class="na">zips - An array of zip codes ex {"zips": ["95014","95050"]} </span> 
+or
+<span class="na">fips- An object with attributes of FIPS code type (metro, county, or state) and FIPS code ex {"fips":{"type": "metro", "code": "63217"}}</span>
+                 </code></pre>
+              </div>
+              <h4>Output:</h4>
+               <div class="highlight">
+                 <pre><code class="language-json" data-lang="json"><span class="cp">
+{
+    "data": {
+        "1994": {
+            "99516": 1656,
+            "99517": 3078
+        },
+        "1995": {
+            "99516": 1760,
+            "99517": 3082
+        },
+        ...
+    }
+}
+    </span></code></pre>
+
+              </div>
+            </div>
+            <h3 id="totals-oneyear">/totals/:variable_name/:year</h3>
+            <p class="tab">Returns a list of the requested variable for each of the POSTed zip codes or for each of the zip codes within the specified FIPS code in the year requested (from 1994 to 2012).</p>
+            <div class="zero-clipboard"><span class="btn-clipboard">Copy</span></div>
+            <div class="highlight">
+                 <pre><code class="language-html" data-lang="html"><span class="cp">http://zbpa.api.availabs.org/totals/:variable_name/:year</span>
+<span class="s">required</span> <span class="nt">POST</span>: 
+<span class="na">zips - An array of zip codes ex {"zips": ["95014","95050"]} </span>
+or 
+<span class="na">fips- An object with attributes of FIPS code type (metro, county, or state) and FIPS code ex {"fips":{"type": "metro", "code": "63217"}}</span>
+                 </code></pre>
+              </div>
+            <h4>Output:</h4>
+             <div class="highlight">
+               <pre><code class="language-json" data-lang="json"><span class="cp">
+{
+    "data": {
+        "99516": 1308,
+        "99517": 1819
+    }
+}
+  </span></code></pre>
+
+              </div>
+            <!-- 
+               End of Totals section
+            -->
+            <div class="bs-docs-section">
+              <h1 id="details" class="page-header">Zip Business Patterns Details Routes</h1>
+              <h3 id="details-key">Details Key</h3>
+                <p class="tab">Each zip code contains the figures of 
+                <ul class="list-group">
+                  <li class="list-group-item emps">total establishments,</li>
+                  <li class="list-group-item emps">number of establishments with 1-4 employees,</li>
+                  <li class="list-group-item emps">number of establishments with 5-9 employees,</li>
+                  <li class="list-group-item emps">number of establishments with 10-19 employees,</li>
+                  <li class="list-group-item emps">number of establishments with 20-49 employees,</li>
+                  <li class="list-group-item emps">number of establishments with 50-99 employees,</li>
+                  <li class="list-group-item emps">number of establishments with 100-249 employees,</li>
+                  <li class="list-group-item emps">number of establishments with 250-499 employees,</li>
+                  <li class="list-group-item emps">number of establishments with 500-999 employees, and </li>
+                  <li class="list-group-item emps">number of establishments with 1000 or more employees</li>
+                </ul> in that zip code.</p>
+                
+              <h3 id="details-allyears">/details</h3>
+              
+              <p class="tab">Returns, for each of the POSTed zip codes or for each of the zip codes within the specified FIPS code, a list of the business figures for those businesses categorized under the given NAICS code in those zipcodes from 1994 to 2012.</p>
+              <div class="zero-clipboard"><span class="btn-clipboard">Copy</span></div>
+              <div class="highlight">
+                 <pre><code class="language-html" data-lang="html"><span class="cp">http://zbpa.api.availabs.org/details</span>
+<span class="s">required</span> <span class="nt">POST</span>: 
+<span class="na">naics - An array of naics codes ex {"naics": ["72", "13"]}</span> 
+and one of the following:
+<span class="na">zips - An array of zip codes ex {"zips": ["95014","95050"]} </span>
+or
+<span class="na">fips- An object with attributes of FIPS code type (metro, county, or state) and FIPS code ex {"fips":{"type": "metro", "code": "63217"}}</span>
+                 </code></pre>
+              </div>
+              <h4>Output:</h4>
+               <div class="highlight">
+                 <pre><code class="language-json" data-lang="json"><span class="cp">
+{
+    "data": {
+        "1994": {
+            "95014": {
+                "total": "52",
+                "1-4": "33",
+                "5-9": "9",
+                "10-19": "7",
+                "20-49": "1",
+                "50-99": "1",
+                "100-249": "1",
+                "250-499": "0",
+                "500-999": "0",
+                "1000+": "0"
+            },
+            "95050": {
+                "total": "43",
+                "1-4": "25",
+                "5-9": "11",
+                "10-19": "5",
+                "20-49": "2",
+                "50-99": "0",
+                "100-249": "0",
+                "250-499": "0",
+                "500-999": "0",
+                "1000+": "0"
+            }
+        },        ...
+    }
+}
+    </span></code></pre>
+
+              </div>
+            </div>
+            <h3 id="details-oneyear">/details/:year</h3>
+            <p class="tab">Returns, for each of the POSTed zip codes or for each of the zip codes within the specified FIPS code, a list of the business figures for those businesses categorized under the given NAICS code in those zipcodes in the year requested (from 1994 to 2012).</p>
+            <div class="zero-clipboard"><span class="btn-clipboard">Copy</span></div>
+            <div class="highlight">
+                 <pre><code class="language-html" data-lang="html"><span class="cp">http://zbpa.api.availabs.org/details/:year</span>
+<span class="s">required</span> <span class="nt">POST</span>: 
+<span class="na">naics - An array of naics codes ex {"naics": ["72", "13"]}</span>
+and one of the following:
+<span class="na">zips - An array of zip codes ex {"zips": ["95014","95050"]} </span>
+or
+<span class="na">fips- An object with attributes of FIPS code type (metro, county, or state) and FIPS code ex {"fips":{"type": "metro", "code": "63217"}}</span>
+                 </code></pre>
+              </div>
+            <h4>Output:</h4>
+             <div class="highlight">
+               <pre><code class="language-json" data-lang="json"><span class="cp">
+{
+    "data": {
+        "95014": {
+            "total": "134",
+            "1-4": "29",
+            "5-9": "24",
+            "10-19": "38",
+            "20-49": "30",
+            "50-99": "11",
+            "100-249": "2",
+            "250-499": "0",
+            "500-999": "0",
+            "1000+": "0"
+        },
+        ...
+    }
+}
+  </span></code></pre>
+
+              </div>
+            <!-- 
+               End of Details section
+            -->
+        </div> <!-- End of Docs Section -->
+      </div> <!-- End of Col-md9 main -->
+      
+
+
+      <div class="col-md-3" role="complementary">
+         <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm" style="position:fixed">
+            <ul class="nav bs-docs-sidenav">
+               <li class="">
+                  <a href="#overview">Overview</a>
+                  <ul class="nav">
+                     <li class=""><a href="#overview-about">About The Data</a></li>
+                     <li class=""><a href="#overview-about-us">About Us</a></li>
+                  </ul>
+               </li>
+               <li class="">
+                  <a href="#geo">Geography Routes</a>
+                  <ul class="nav">
+                     <li class=""><a href="#geo-zip">Zip Code Lists</a></li>
+                     <li class=""><a href="#geo-geo">Zip Code Geographies</a></li>
+                     <li class=""><a href="#geo-naics">Naics Code Lists</a></li>
+                  </ul>
+               </li>
+               <li class="">
+                  <a href="#totals">Zip Business Patterns Totals Routes</a>
+                  <ul class="nav">
+                     <li class=""><a href="#totals-variables">Variables Available</a></li>
+                     <li class=""><a href="#totals-allyears">Totals for All Years</a></li>
+                     <li class=""><a href="#totals-oneyear">Totals for Specific Year</a></li>
+                  </ul>
+               </li>
+               <li class="">
+                  <a href="#details">Zip Business Patterns Details Routes</a>
+                  <ul class="nav">
+                     <li class=""><a href="#details-key">Details Key</a></li>
+                     <li class=""><a href="#details-allyears">Details for All Years</a></li>
+                     <li class=""><a href="#details-oneyear">Details for One Year</a></li>
+                  </ul>
+               </li>
+
+               </li>
+            </ul>
+            <a class="back-to-top" href="#top">
+            Back to top
+            </a>
+         </nav>
+      </div>
+   
+   </div> <!-- Row -->
+</div>
+<!-- Footer
+   ================================================== -->
+<footer class="bs-docs-footer" role="contentinfo">
+</footer>
+<!-- Bootstrap core JavaScript
+   ================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src='bower_components/jquery/dist/jquery.min.js' ></script>
+<script src='bower_components/bootstrap/js/scrollspy.js' ></script>
+<script src='bower_components/bootstrap/js/affix.js' ></script>
+<script >
+  $(function(){
+
+  $('body').scrollspy({target:".bs-docs-sidebar"});
+
+  $('.bs-docs-sidebar').affix({
+    offset: {
+      top: 420,
+      bottom: function () {
+        return (this.bottom = $('.footer').outerHeight(true))
+      }
+    }
+  });
+})
+</script>
