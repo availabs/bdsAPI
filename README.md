@@ -810,3 +810,16 @@ By convention functions that lead with an underscore are intended for within-mod
 The dynamic routing of field elements circumvents the traditional routing and model design of a sails application. The BDS data does not lend itself to traditional object hierarchies that map well to relational databases.  Because of this models are used only for their generic SQL `query()` method.  Generating this SQL is the router responsibility of the router, who converts all URI segments after the `/firm` and `/establishment` parts to this custom SQL query.  The guts of this transformation have been abstracted into a Sails [service](http://sailsjs-documentation.readthedocs.org/en/latest/concepts/Services/) `FieldService.js`. This file contains more documentation,  but consider starting by looking at the `route_table()` and the `route_query()` methods. Once SQL rows have been returned the API will group them hierarchically based on the order of the URI segments.  This code is relatively small,  but is managed from a separate file `GroupService.js`. 
 
 Fabric deployment of the database relies heavily on the [Pandas](http://pandas.pydata.org/) python library for data I/O  and munging. Pandas provides methods for reading from CSV files and writing SQL to databases.  Database connections are managed through [SQLAlchemy](http://www.sqlalchemy.org/) engines. To ensure library support for the munging operations files,  census bureau files will be downloaded into the temporary directory of the **launching** computer,  rather than the remote host that is being deployed too. 
+
+
+To set up the Fabric and the data loading environment:
+```bash
+	sudo apt-get update; sudo apt-get install python python-dev pip postgresql-devel -y 
+	sudo pip install config 
+	sudo pip install sqlalchemy 
+	sudo pip install pandas 
+	sudo pip install psycopg2 
+	sudo pip install pycrypto
+	sudo pip install ecdsa
+	sudo pip install fabric
+```

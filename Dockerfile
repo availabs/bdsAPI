@@ -11,4 +11,4 @@ VOLUME ["/app"]
 
 EXPOSE 1337
 
-CMD node /app/app.js
+CMD cd /app && sails lift
