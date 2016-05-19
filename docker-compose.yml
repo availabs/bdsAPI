@@ -2,6 +2,8 @@ sails:
   build: .
   volumes:
     - .:/app
+  environment:
+    - DB_SERVER_HOSTNAME=postgres
   ports:
     - "1337:1337"
   links:
