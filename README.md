@@ -814,12 +814,19 @@ Fabric deployment of the database relies heavily on the [Pandas](http://pandas.p
 
 To set up the Fabric and the data loading environment:
 ```bash
-	sudo apt-get update; sudo apt-get install python python-dev pip postgresql-devel -y 
+	sudo apt-get update; sudo apt-get install python python-dev pip postgresql-server-dev-all -y 
 	sudo pip install config 
 	sudo pip install sqlalchemy 
 	sudo pip install pandas 
 	sudo pip install psycopg2 
 	sudo pip install pycrypto
 	sudo pip install ecdsa
+	sudo pip install pyyaml
 	sudo pip install fabric
 ```
+
+Database configuration is in /data/db_config.yml. This file is used by both the Python data munging/loading script and the Sails web server. 
+
+### To load new data into Postgres: ###
+####Warning: This command will drop all tables before uploading the new data.
+`cd data && fab build_bds`

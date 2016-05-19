@@ -21,6 +21,17 @@
 #  THE SOFTWARE.
 #
 
+import sys
+import yaml
+
+with open('db_config.yml', 'r') as stream:
+    try:
+        db_config = yaml.load(stream)
+    except Exception as exc:
+        print(exc)
+        sys.exit(1)
+
+
 # Database user information for the BDS firm and establishment databases
 #
 # @param db_user
@@ -28,8 +39,13 @@
 # CONSIDER: putting this into some kind of seperate ignored configuration
 #           file. Otherwise it represents a pretty serious security risk.
 #
-db_user = {"user": "bds_user",
-           "password": "letmein"}
+
+db_host = db_config["db_host"]
+
+#db_user = {"user":     os.environ.get("BDSAPI_DB_USER"),
+#           "password": os.environ.get("BDSAPI_DB_PASSWORD")}
+db_user = db_config["db_user"]
+
 
 # Files is a dict with two keys which will be used as the database names
 # for the BDS firm data and the establishment data.  The values of these

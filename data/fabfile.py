@@ -27,7 +27,7 @@ from fabric.api import *
 from fabric.context_managers import cd, settings, quiet, lcd
 from fabric.contrib.files import exists
 import os
-from config import files, db_user, replace_codes
+from config import files, db_user, db_host, replace_codes
 import sqlalchemy
 from sqlalchemy import create_engine
 import pandas as pd
@@ -36,6 +36,12 @@ import sys
 from getpass import getpass
 
 sys.dont_write_bytecode = True
+
+##
+# Get the host from the .env file
+env.hosts = [db_host]
+
+
 
 ##
 # pull_files relies on the config.files variable to pull
@@ -63,10 +69,10 @@ def pull_files():
 @task
 def teardown_databases():
     password = getpass("Please enter postgres user password for {}: "
-                       .format(env.host))
+                       .format(db_host))
     eng = create_engine('postgresql://postgres{}@{}/postgres'
                         .format(":" + password if password else "",
-                                env.host),
+                                db_host),
                         isolation_level='AUTOCOMMIT')
 
 
@@ -90,10 +96,10 @@ def teardown_databases():
 @task
 def setup_databases(fail=False):
     password = getpass("Please enter postgres user password for {}: "
-                       .format(env.host))
+                       .format(db_host))
     eng = create_engine('postgresql://postgres{}@{}/postgres'
                         .format(":" + password if password else "",
-                                env.host),
+                                db_host),
                         isolation_level='AUTOCOMMIT')
     try:
         with eng.connect() as conn:
@@ -152,7 +158,7 @@ def setup_databases(fail=False):
 def build_msa_table():
     uri = 'postgresql://{}:{}@{}/bds_firm'.format(db_user['user'],
                                                   db_user['password'],
-                                                  env.host)
+                                                  db_host)
     eng = create_engine(uri)
     # SQL to create the msa table from the aggregate AGExMSA table
     sql = """
@@ -209,7 +215,7 @@ def build_tables(test=False):
     for db_name, tuples in files.items():
         uri = 'postgresql://{}:{}@{}/{}'.format(db_user['user'],
                                                 db_user['password'],
-                                                env.host,
+                                                db_host,
                                                 db_name)
         eng = create_engine(uri)
 
@@ -309,7 +315,9 @@ def remove_postgres_container():
 # container using this task first.
 # It is run from the command line as follows:
 #
-# $[bds_root_directory]/data> fab -H [host] build_bds_data_container
+# NOTE: Database configuration variables should be set in /data/db_config.yml
+#
+# $[bds_root_directory]/data> fab build_bds_data_container
 # ...
 #
 # Fabric is designed to run against remote hosts using SSH. You must
@@ -335,7 +343,9 @@ def build_bds_data_container(name="bds_data"):
 # does not distinguish between virtualized or actual database servers
 # It is run in a similar fashion to build_bds_data_container. Eg.
 #
-# $[bds_root_directory]/data> fab -H [host] build_bds_data_container
+# NOTE: Database configuration variables should be set in /data/db_config.yml
+#
+# $[bds_root_directory]/data> fab build_bds_data_container
 # ...
 #
 # Unfortunatley it suffers from the same issue described in
