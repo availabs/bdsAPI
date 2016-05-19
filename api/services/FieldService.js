@@ -341,9 +341,8 @@ module.exports = {
 					  function(f){
 					      return f != "yr";}));
 	} catch(err){
-
 	    // TODO this should be a debug statement not a console log
-	    console.log(err);
+	    console.log(err.stack);
 	    return undefined;
 	}
     },
